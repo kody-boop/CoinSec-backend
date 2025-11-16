@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: CoinSec-api
+  profiles:
+    active: dev
+
+sa-token:
+  token-name: coinsec-token
+  timeout: 2592000
+  active-timeout: 604800
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  jwt-secret-key: sXVUlwGrwOtkgZVgQgFWQ
+
+log-key: sXVUlwGrwOtkgZVgQgFWQ

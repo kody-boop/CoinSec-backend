@@ -1,0 +1,36 @@
+# =============== 默认规则 ===============
+# 自动检测文本文件并标准化换行符（仓库中统一存为 LF）
+* text=auto
+
+# =============== 特殊文本文件（强制指定换行符） ===============
+# Shell 脚本必须用 LF（即使在 Windows 上）
+*.sh text eol=lf
+/mvnw text eol=lf
+/gradlew text eol=lf
+
+# Windows 批处理必须用 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# =============== 明确的文本文件类型（可选，增强可读性） ===============
+*.c text
+*.h text
+*.java text
+*.kt text
+*.xml text
+*.json text
+*.yml text
+*.yaml text
+*.md text
+*.txt text
+
+# =============== 二进制文件 ===============
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.jar binary
+*.exe binary

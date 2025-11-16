@@ -1,0 +1,55 @@
+name: Release on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Build with Maven Wrapper
+        run: ./mvnw -B clean package -DskipTests
+
+      - name: Get JAR file
+        id: get-jar
+        run: |
+          JAR_FILE=$(find target -name "backend-*.jar" | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "No JAR file found!"
+            exit 1
+          fi
+          echo "jar_path=$JAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: Extract version from tag and rename JAR
+        id: rename-jar
+        run: |
+          # GitHub tag 格式如 v1.0.0，我们去掉前缀 'v'
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          echo "Tag: $TAG"
+          echo "Version: $VERSION"
+          
+          # 重命名为 coinsec-${VERSION}.jar
+          NEW_JAR="target/coinsec-${VERSION}.jar"
+          cp "${{ steps.get-jar.outputs.jar_path }}" "$NEW_JAR"
+          echo "renamed_jar=$NEW_JAR" >> $GITHUB_OUTPUT
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.rename-jar.outputs.renamed_jar }}
+          generate_release_notes: true
